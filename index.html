@@ -3,9 +3,11 @@
    <head>
       <meta charset="UTF-8" />
       <title>ClassAR - Demo Bumi</title>
+
       <!-- A-Frame & AR.js CDN -->
       <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-      <script src="https://cdn.rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.2/aframe/build/aframe-ar.min.js"></script>
+
       <style>
          body,
          html {
@@ -25,33 +27,61 @@
             border-radius: 12px;
             font-family: sans-serif;
             text-align: center;
+            transition: opacity 0.3s;
+         }
+         #info-box.hidden {
+            opacity: 0;
          }
       </style>
    </head>
 
    <body>
       <!-- Scene AR -->
-      <a-scene embedded arjs="sourceType: webcam;">
+      <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
          <!-- Marker -->
-         <a-marker preset="hiro">
+         <a-marker preset="hiro" id="hiroMarker" emitevents="true">
             <!-- 3D Bumi -->
-            <a-entity gltf-model="earth.glb" scale="0.5 0.5 0.5" rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"></a-entity>
+            <a-entity id="earthModel" gltf-model="earth.glb" scale="0.5 0.5 0.5" rotation="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"></a-entity>
          </a-marker>
 
          <a-entity camera></a-entity>
       </a-scene>
 
       <!-- Box Info -->
-      <div id="info-box">🌍 <b>Bumi</b> — Planet ketiga dari Matahari. Tempat tinggal kita yang kaya kehidupan.</div>
+      <div id="info-box">Arahkan kamera ke marker Hiro...</div>
 
       <script>
-         // Voice narration
+         const infoBox = document.getElementById("info-box");
+         const marker = document.getElementById("hiroMarker");
+         const earth = document.getElementById("earthModel");
+
+         // === Voice narration (sekali di awal) ===
          window.onload = () => {
             const msg = new SpeechSynthesisUtterance("Ini adalah Bumi, planet ketiga dari Matahari. Tempat tinggal kita yang penuh kehidupan.");
             msg.lang = "id-ID";
             msg.rate = 1;
             speechSynthesis.speak(msg);
          };
+
+         // === Marker event listener ===
+         marker.addEventListener("markerFound", () => {
+            infoBox.textContent = "🌍 Bumi — Planet ketiga dari Matahari. Tempat tinggal kita yang kaya kehidupan.";
+            infoBox.classList.remove("hidden");
+         });
+
+         marker.addEventListener("markerLost", () => {
+            infoBox.textContent = "Marker tidak terlihat. Arahkan kembali ke marker Hiro.";
+         });
+
+         // === Error handling for GLB ===
+         earth.addEventListener("model-error", (e) => {
+            console.error("Gagal memuat model:", e.detail.src);
+            infoBox.textContent = "⚠️ Gagal memuat model Earth.glb. Pastikan file tersedia di folder yang sama.";
+         });
+
+         earth.addEventListener("model-loaded", () => {
+            console.log("Model Earth berhasil dimuat.");
+         });
       </script>
    </body>
 </html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+   </head>
+   <body>
+      <a-scene>
+         <a-entity light="type: ambient; intensity: 0.8;"></a-entity>
+         <a-entity light="type: directional; position: -1 1 2;"></a-entity>
+
+         <a-entity position="0 1 -3" scale="0.03 0.03 0.03">
+            <a-gltf-model src="moon.glb" scale="1 1 1" position="0 0 0" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"> </a-gltf-model>
+         </a-entity>
+
+         <a-sky color="#ECECEC"></a-sky>
+      </a-scene>
+   </body>
+</html>

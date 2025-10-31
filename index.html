@@ -18,13 +18,14 @@
    <body>
       <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
          <a-marker id="dynamicMarker" emitevents="true"></a-marker>
-         <a-entity camera position="0 1 3" rotation="-10 0 0"></a-entity>
+         <a-entity camera rotatition="0 0 0"></a-entity>
       </a-scene>
 
       <script>
          const params = new URLSearchParams(window.location.search);
-         const modelUrl = params.get("model") || "moon.glb";
+         const modelUrl = params.get("model") || "Sun.glb";
          const markerUrl = params.get("marker");
+         const scaleModel = params.get("scale") || "1 1 1";
 
          const marker = document.getElementById("dynamicMarker");
 
@@ -37,8 +38,7 @@
 
          const model = document.createElement("a-entity");
          model.setAttribute("gltf-model", modelUrl);
-         model.setAttribute("scale", "2 2 2");
-         model.setAttribute("position", "0 0 0");
+         model.setAttribute("scale", scaleModel);
          model.setAttribute("animation", "property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear");
 
          marker.appendChild(model);

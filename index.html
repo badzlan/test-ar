@@ -10,11 +10,18 @@
             margin: 0;
             overflow: hidden;
          }
+         @media (min-width: 768px) {
+            video {
+               transform: scaleX(-1);
+               -webkit-transform: scaleX(-1);
+               -moz-transform: scaleX(-1);
+            }
+         }
       </style>
    </head>
 
    <body>
-      <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
+      <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; facingMode: user; debugUIEnabled: false;">
          <a-marker id="dynamicMarker" emitevents="true"></a-marker>
          <a-entity camera rotatition="0 0 0"></a-entity>
       </a-scene>

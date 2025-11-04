@@ -10,27 +10,32 @@
             margin: 0;
             overflow: hidden;
          }
-         @media (min-width: 768px) {
+         /* @media (min-width: 768px) {
             video {
                transform: scaleX(-1);
                -webkit-transform: scaleX(-1);
                -moz-transform: scaleX(-1);
             }
-         }
+         } */
       </style>
    </head>
 
    <body>
       <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; facingMode: user; debugUIEnabled: false;">
          <a-marker id="dynamicMarker" emitevents="true"></a-marker>
-         <a-entity camera rotatition="0 0 0"></a-entity>
+         <a-entity camera rotation="0 0 0"></a-entity>
       </a-scene>
 
       <script>
          const params = new URLSearchParams(window.location.search);
-         const modelUrl = params.get("model") || "sun.glb";
+         const modelUrl = params.get("model") || "model/sun.glb";
          const markerUrl = params.get("marker");
-         const scaleModel = params.get("scale") || "1 1 1";
+         let scaleModel = params.get("scale") || "1 1 1";
+
+         // Jika scale hanya satu angka, ubah jadi tiga nilai sama
+         if (scaleModel && !scaleModel.includes(" ")) {
+            scaleModel = `${scaleModel} ${scaleModel} ${scaleModel}`;
+         }
 
          const marker = document.getElementById("dynamicMarker");
 

@@ -14,8 +14,8 @@
    </head>
 
    <body>
-      <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; facingMode: user; debugUIEnabled: false;">
-         <a-marker id="dynamicMarker" emitevents="true"></a-marker>
+      <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; facingMode: user; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+         <a-marker id="dynamicMarker" type="barcode" emitevents="true"></a-marker>
          <a-entity camera></a-entity>
       </a-scene>
 
@@ -23,21 +23,16 @@
          const params = new URLSearchParams(window.location.search);
 
          // Ambil params
-         let modelUrl = params.get("model");
-         let markerUrl = params.get("marker");
-         let scaleModel = params.get("scale");
+         let modelUrl = params.get("model") || "/model/astronomi/tata-surya.glb";
+         let scaleModel = params.get("scale") || 1;
+         let markerParam = params.get("marker") || params.get("barcode") || "1";
 
-         // Default
-         if (!modelUrl) modelUrl = "/model/geografi/Winter.glb";
+         // Ambil angka dari nama file marker, misal "1.png" -> 1
+         let barcodeValue = parseInt(markerParam.match(/\d+/)?.[0] || markerParam, 10);
 
-         // Marker logic
          const marker = document.getElementById("dynamicMarker");
-         if (markerUrl) {
-            marker.setAttribute("type", "pattern");
-            marker.setAttribute("url", markerUrl);
-         } else {
-            marker.setAttribute("preset", "hiro");
-         }
+         marker.setAttribute("type", "barcode");
+         marker.setAttribute("value", barcodeValue);
 
          // Tambahkan model
          const model = document.createElement("a-entity");
@@ -45,24 +40,14 @@
          model.setAttribute("animation", "property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear");
          marker.appendChild(model);
 
-         // === AUTO SCALE LOGIC ===
+         // AUTO SCALE
          model.addEventListener("model-loaded", (e) => {
             const obj = e.detail.model;
-
-            // Hitung ukuran bounding box model
             const box = new THREE.Box3().setFromObject(obj);
             const size = box.getSize(new THREE.Vector3());
-
-            // Tentukan target ukuran maksimum (misal tinggi maksimum 1 unit)
             const maxDimension = Math.max(size.x, size.y, size.z);
-            const targetSize = scaleModel ? parseFloat(scaleModel) : 1; // kamu bisa ubah (misal 0.5 biar lebih kecil)
-
-            // Hitung rasio skala otomatis
-            const scaleValue = targetSize / maxDimension;
-
-            // Terapkan skala yang sama ke semua sumbu
+            const scaleValue = parseFloat(scaleModel) / maxDimension;
             model.setAttribute("scale", `${scaleValue} ${scaleValue} ${scaleValue}`);
-
             console.log("Auto scale applied:", scaleValue);
          });
       </script>
